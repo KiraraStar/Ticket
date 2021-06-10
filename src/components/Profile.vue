@@ -11,25 +11,30 @@
 		<div class="head have-login" v-if="$store.state.loginStatus === true">
 			<div class="usr-info">
 				<el-avatar shape="square" :size="40" :src="squareUrl" class="img-pro"></el-avatar>
-				<div class="usr-name">usr1112</div>
+				<div class="usr-name">{{name}}</div>
 				<div style="clear: both;"></div>
 			</div>
 			<div class="remoney">
-				<div>余额<span>150</span></div>
-				<div>
+				<div>余额<span>{{pay}}</span></div>
+				<div @click="rec">
 					<i>充值</i>
 				</div>
+			</div>
+			<div class="exit">
+				<div @click="exit">退出登录</div>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+	import Cookies from 'js-cookie';
 	export default{
 		data() {
 			return{
 				squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-				
+				pay: '',
+				name: '',
 			}
 		},
 		
@@ -39,8 +44,23 @@
 				this.$router.push({
 					name: 'Login',
 				})
+			},
+			rec(){
+				this.$router.push('/recharge');
+			},
+			exit(){
+				localStorage.removeItem('name');
+				localStorage.removeItem('pay');
+				localStorage.removeItem('user');
+				
+				Cookies.remove('user');
+				Cookies.remove('name');
+				this.$store.commit('updateStatus',false);
+				console.log('succ');
+				this.$router.push('/');
 			}
 		},
+		
 		created() {
 			console.log(this.$store.state.loginStatus)
 		},
@@ -48,6 +68,14 @@
 			document.getElementById('mainPageIndex').style.color = 'black';
 			document.getElementById('profileIndex').style.color = '#409eef';
 			document.getElementById('top').innerHTML = '个人中心';
+			console.log(this.$store.state.user);
+			
+			console.log('this')
+			console.log(localStorage.getItem('pay'))
+			console.log(localStorage.getItem('name'))
+		
+			this.pay = localStorage.getItem('pay');
+			this.name = localStorage.getItem('name');
 		}
 	}
 </script>
@@ -101,7 +129,7 @@
 	.pro-login{
 		float: right;
 		font-size: 18px;
-		margin: 5px 30px;
+		margin: 5px 30px 5px 0;
 		height: 40px;
 		line-height: 40px;
 	}
@@ -118,11 +146,30 @@
 		font-weight: bolder;
 		font-size: 16px;
 	}
+	.exit{
+		background-color: white;
+		display: flex;
+		padding: 12px 0;
+		border-radius: 8px;
+		margin-top: 8px;
+		min-height: 40px;
+	}
+	.exit>div{
+		width: 60%;
+		background-color: #409eef;
+		color: white;
+		height: 20px;
+		border-radius: 8px;
+		text-align: center;
+		margin: 10px auto;
+		line-height: 20px;
+		vertical-align: center;
+	}
 </style>
 <style>
 	.img-pro{
 		float: left;
-		margin: 5px 40px;
+		margin: 5px 0 5px 40px;
 		height: 40px;
 		width: 40px;
 	}

@@ -1,24 +1,20 @@
-# car
+# 校车购票系统
 
-## Project setup
-```
-npm install
-```
+## 前端
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### 注册、登录
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### 查看校车时刻表
 
-### Lints and fixes files
-```
-npm run lint
-```
+### 选择乘车区间
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 选择时间
+
+### 购买、充值
+
+## 后端
+
+---
+
+see https://github.com/KiraraStar/ticket
+

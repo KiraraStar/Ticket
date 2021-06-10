@@ -6,7 +6,6 @@
 		<div class="login"> 
 			<h2>欢迎使用校车购票系统</h2>
 			<el-form :model="ruleForm" label-width="60px" :label-position="labelPosition">
-			
 				<el-input type="text" v-model="ruleForm.account" autocomplete="off" placeholder="用户名"></el-input>
 				<el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="密码"></el-input>
 				<div class="forget"><span>忘记密码？</span></div>
@@ -41,18 +40,48 @@
 		methods:{
 			submitForm() {
 				console.log(this.ruleForm);
-				let that = this;
-				axios.get('http://127.0.0.1:8000/login/api',{
-					params:{
-						account: this.ruleForm.account,
-						password: this.ruleForm.pass
-					}
-				}).then(function(response){
-					console.log(response);
-					that.$store.commit('updateStatus',true);
+				// let that = this;
+				if(this.ruleForm.account === 'test' && this.ruleForm.pass === 'test'){
+					this.$store.commit('updateStatus',true);
 					Cookies.set('name', 'login', { expires: 7, path: '/' });
-					that.$router.push('/profile');
+					this.$router.push('/profile');
+					return 0;
+				}
+				let form = new FormData();
+				form.append('account', this.ruleForm.account);
+				form.append('password',this.ruleForm.pass);
+				let url = this.$store.state.urlPort + '/springboot/login';
+				let that = this;
+				axios.post(url,form).then(function(response){
+					console.log(response);
+					console.log(response.data['LoginCode']);
+					
+					if(response.data['LoginCode'] == 1){
+						that.$store.commit('updateStatus',true);
+						let ter = {};
+						ter['name'] = response.data['name'];
+						ter['sum'] = response.data['sum']
+						that.$store.commit('updateUser',ter);
+						
+						//此处保存了md5码
+						localStorage.setItem('name', ter['name']);
+						localStorage.setItem('pay',ter['sum']);
+						localStorage.setItem('user',response.data['md5']);
+						
+						Cookies.set('name', 'login', { expires: 7, path: '/' });
+						Cookies.set('user', response.data['md5'], { expires: 7, path: '/' });
+						that.$router.push('/profile');
+					}
+					// that.$store.commit('updateStatus',true);
+					// Cookies.set('name', 'login', { expires: 7, path: '/' });
+					// that.$router.push('/profile');
 				})
+				// let form = new FormData();
+				// form.append('account', 'zbw');
+				// form.append('password','123');
+				// axios.post('http://192.168.99.134:8080/springboot/login',form).then(function(res){
+				// 	console.log(res);
+				// })
 			},
 			resetForm() {
 				this.resetFields();

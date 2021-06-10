@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+	<script>
+		document.addEventListener('plusready', function() { //添加一个点击事件监控返回按钮
+			var webview = plus.webview.currentWebview();
+			plus.key.addEventListener('backbutton', function() {
+				webview.canBack(function(e) {
+					if ( e.canBack() ) {
+						webview.back(); //如果有上一个路由则直接返回上一个路由页面
+					} else { //如果没有则询问是否要退出应用，或者执行其他操作
+						if (confirm("确定要退出应用吗？")) {
+							txt = "确定";
+						  } else {
+							txt = "取消";
+						  }
+						  if (txt === "确定") {
+							  webview.close(); //关闭应用  
+						}
+					}
+				})
+			});
+		});
+	</script>
+
+
   </head>
   <body>
     <noscript>
@@ -14,6 +37,7 @@
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous"></script>
 </html>

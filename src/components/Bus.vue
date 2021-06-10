@@ -2,23 +2,30 @@
 	<div class="bus" @click="buyConfirm">
 		<div class="bus-top">
 			<div class="bus-time">
-				<div>09:05</div>
+				<div>{{ti.time1}}</div>
 				<i class="el-icon-minus"></i>
-				<div>06:17</div>
+				<div>{{ti.time2}}</div>
 			</div>
-			<div class="bus-ticket"> ￥<span>5</span></div>
+			<div class="bus-ticket"> ￥<span>{{ti.price}}</span></div>
 		</div>
 		<div class="bus-bottom">
-			余票10张
+			余票{{left}}张
 		</div>
+		<div class="line"></div>
 	</div>
 </template>
 
 <script>
+	import axios from 'axios';
+	// import Cookies from 'js-cookie';
 	export default{
 		name: 'Bus',
+		props:['ti'],
 		data() {
-			
+			return{
+				like: '',
+				left: 0,
+			}
 		},
 		methods:{
 			buyConfirm(){
@@ -27,10 +34,50 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '购买成功!'
-					});
+					// console.log(this.$store.state.loginStatus);
+					console.log(localStorage.getItem('user'));
+					if((localStorage.getItem('user') == null)){
+						this.$message({
+							type: 'info',
+							message: '未登录!'
+						});
+					}else{
+						let form = new FormData();
+						form.append('account',localStorage.getItem('user'));
+						form.append('date',this.ti.date);
+						form.append('time',this.ti.time);
+						form.append('section',this.ti.section);
+						let url = this.$store.state.urlPort + '/springboot/BuyTicket';
+						console.log('post')
+						axios.post(url,form).then(res=>{
+							if(res.data['Buycode'] == 1){
+								this.left = this.left - 1;
+								this.$message({
+									type: 'success',
+									message: '购买成功!'
+								});
+							}else if (res.data['Buycode'] == 5){
+								this.$message({
+									type: 'info',
+									message: '已经购买当前车次的票!'
+								});
+							}
+							else if (res.data['Buycode'] == 2){
+								this.$message({
+									type: 'info',
+									message: '余额不足!'
+								});
+							}else if (res.data['Buycode'] == 3){
+								this.$message({
+									type: 'info',
+									message: '余票不足!'
+								});
+							}
+							
+						})
+						
+					}
+					
 				}).catch(() => {
 					this.$message({
 						type: 'info',
@@ -38,6 +85,10 @@
 					});
 				});
 			}
+		},
+		mounted() {
+			console.log(this.ti)
+			this.left = Number(this.ti.left)
 		}
 	}
 </script>

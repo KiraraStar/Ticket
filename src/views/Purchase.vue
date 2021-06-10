@@ -1,3 +1,7 @@
+<!-- 
+	购买选票的区间
+	用1-6来标识
+ -->
 <template>
 	<div class="purchase">
 		<el-page-header @back='goBack' content="购买车票">
@@ -14,7 +18,10 @@
 			<div class="c-content">
 				<div class="trans-position">
 					<div >
-						<el-radio checked v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio1" label="1"></el-radio>
+						<el-radio 
+
+						v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio1" label='1' class="is-focus" 
+						@click = 'cli'></el-radio>
 						<div>
 							<i id="huaxi1">华西</i>
 							<i class="el-icon-refresh" @click="changePosition1"></i>
@@ -26,7 +33,8 @@
 				<div class="line"></div>
 				<div class="trans-position">
 					<div>
-						<el-radio v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio2" label="2"></el-radio>
+						<el-radio v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio2" label='3' 
+						@click = 'cli'></el-radio>
 						<div>
 							<i id="huaxi2">华西</i>
 							<i class="el-icon-refresh" @click="changePosition2"></i>
@@ -38,7 +46,8 @@
 				<div class="line"></div>
 				<div class="trans-position">
 					<div>
-						<el-radio v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio3" label="3"></el-radio>
+						<el-radio v-model="radio" style="display: inline-block;float: left;width: 10%;margin-top: 4px;margin-right: 0;" name="radio3" label='5' 
+						@click = 'cli'></el-radio>
 						<div>
 							<i id="wangjiang3">望江</i>
 							<i class="el-icon-refresh" @click="changePosition3"></i>
@@ -63,53 +72,89 @@
 					'box2': false,
 					'box3': false,
 				},
-				radio: 'radio1',
+				radio: '1',
+				chooseInterval: 1,
 			}
 		},
 		methods:{
 			goBack(){
 				this.$router.go(-1);
-			},
+			},			
 			changePosition1(){
-				if(this.transBox.box1 === false){
-					document.getElementById('huaxi1').style.float = 'right';
-					document.getElementById('jiangan1').style.float = 'left';
-					this.transBox.box1 = true;
-				}else{
-					document.getElementById('huaxi1').style.float = 'left';
-					document.getElementById('jiangan1').style.float = 'right';
-					this.transBox.box1 = false;
+				if(this.radio == 1){
+					if(this.transBox.box1 === false){
+						document.getElementById('huaxi1').style.float = 'right';
+						document.getElementById('jiangan1').style.float = 'left';
+						this.chooseInterval = 2;
+						this.transBox.box1 = true;
+						console.log(this.chooseInterval);
+					}else{
+						document.getElementById('huaxi1').style.float = 'left';
+						document.getElementById('jiangan1').style.float = 'right';
+						this.chooseInterval = 1;
+						this.transBox.box1 = false;
+						console.log(this.chooseInterval);
+					}
 				}
 			},
 			changePosition2(){
-				if(this.transBox.box2 === false){
-					document.getElementById('huaxi2').style.float = 'right';
-					document.getElementById('wangjiang2').style.float = 'left';
-					this.transBox.box2 = true;
-				}else{
-					document.getElementById('huaxi2').style.float = 'left';
-					document.getElementById('wangjiang2').style.float = 'right';
-					this.transBox.box2 = false;
+				if(this.radio == 3){
+					if(this.transBox.box2 === false){
+						document.getElementById('huaxi2').style.float = 'right';
+						document.getElementById('wangjiang2').style.float = 'left';
+						this.chooseInterval = 4;
+						this.transBox.box2 = true;
+						console.log(this.chooseInterval);
+					}else{
+						document.getElementById('huaxi2').style.float = 'left';
+						document.getElementById('wangjiang2').style.float = 'right';
+						this.chooseInterval = 3;
+						this.transBox.box2 = false;
+						console.log(this.chooseInterval);
+					}
 				}
 			},
 			changePosition3(){
-				if(this.transBox.box3 === false){
-					document.getElementById('wangjiang3').style.float = 'right';
-					document.getElementById('jiangan3').style.float = 'left';
-					this.transBox.box3 = true;
-				}else{
-					document.getElementById('wangjiang3').style.float = 'left';
-					document.getElementById('jiangan3').style.float = 'right';
-					this.transBox.box3 = false;
+				if(this.radio == 5){
+					if(this.transBox.box3 === false){
+						document.getElementById('wangjiang3').style.float = 'right';
+						document.getElementById('jiangan3').style.float = 'left';
+						this.chooseInterval = 6;
+						this.transBox.box3 = true;
+						console.log(this.chooseInterval);
+					}else{
+						document.getElementById('wangjiang3').style.float = 'left';
+						document.getElementById('jiangan3').style.float = 'right';
+						this.chooseInterval = 5;
+						this.transBox.box3 = false;
+						console.log(this.chooseInterval);
+					}
 				}
 			}
 		},
 		mounted() {
 			var that = this;
 			document.querySelector('#btnSearch').onclick = function() {
-				that.$router.push('/purchase/time');
+				if(that.radio == 1 && that.chooseInterval != 1 && that.chooseInterval != 2){
+					that.transBox.box1 === false ? that.chooseInterval = 1 :that.chooseInterval = 2;
+					that.$router.push({path: '/purchase/time', query:{select: that.chooseInterval}});
+				}
+				if(that.radio == 3 && that.chooseInterval != 3 && that.chooseInterval != 4){
+					that.transBox.box1 === false ? that.chooseInterval = 3 :that.chooseInterval = 4;
+					that.$router.push({path: '/purchase/time', query:{select: that.chooseInterval}});
+				}
+				if(that.radio == 5 && that.chooseInterval != 5 && that.chooseInterval != 6){
+					that.transBox.box1 === false ? that.chooseInterval = 5 :that.chooseInterval = 6;
+					that.$router.push({path: '/purchase/time', query:{select: that.chooseInterval}});
+				}
+				that.$router.push({path: '/purchase/time', query:{select: that.chooseInterval}});
+				console.log(that.radio)
 			}
-		}
+		},
+		updated() {
+			console.log(this.chooseInterval);
+		},
+		
 	}
 </script>
 
@@ -178,7 +223,7 @@
 		background-color: white;
 		border-radius: 7px;
 		box-shadow: 2px 2px 3px #aaa;
-		margin: 10px auto;
+		margin: 16px auto;
 		
 		.c-header{
 			i{

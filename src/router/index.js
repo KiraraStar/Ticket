@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+
 // import MainPage from '../components/MainPage.vue';
 const routes = [
 	// mode: 'hash',
@@ -49,6 +50,11 @@ const routes = [
 	component: () => import('../components/Login.vue')
   },
   {
+	path: '/recharge',
+	name: 'Recharge',
+	component: () => import('../views/Recharge.vue')
+  },
+  {
 	path: '/register',
 	name: 'Register',
 	component: () => import('../views/Register.vue')
@@ -57,6 +63,11 @@ const routes = [
 	path: '/purchase',
 	name: 'Purchase',
 	component: () => import('../views/Purchase.vue'),
+  },
+  {
+	path: '/history',
+	name: 'History',
+	component: () => import('../views/History.vue'),
   },
   {
 	path: '/purchase/time',
@@ -86,6 +97,29 @@ router.beforeEach((to, from, next) => {
 	// document.getElementById('mainPage').style.color = 'black';
 	// document.getElementById('profile').style.color = 'green';
  //  }
+ //Mui
+	// var quit = false  //false为单击，true为连续按两次
+	// mui.back = function(){  //按下物理返回键
+	// 	if(!quit){ //首次按下
+	// 		if(to.name == 'Home' || to.name == 'Profile'){
+	// 			mui.toast("再按一次退出应用")
+	// 			quit = true				
+	// 			setTimeout(function(){
+	// 				quit = false
+	// 			},2000)
+	// 		}else{
+	// 			if(to.matched[0].instances.default.showmask){
+	// 				to.matched[0].instances.default.showmask = false
+	// 			}else{
+	// 				history.go(-1); // 返回上一页
+	// 			}
+	// 		}
+		
+	// 	}else{  //连续按下
+	// 		plus.runtime.quit(); //退出app
+	// 	}	 
+	// }
+ 
   if (to.meta.title) {
       document.title = to.meta.title
   }

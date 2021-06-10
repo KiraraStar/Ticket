@@ -4,7 +4,7 @@
 			<i class="el-icon-s-ticket"></i>
 			<div>购买</div>
 		</div>
-		<div class="history">
+		<div class="history" @click="goHistory">
 			<i class="el-icon-refresh"></i>
 			<div>历史</div>
 		</div>
@@ -28,6 +28,9 @@
 			goTime() {
 				this.$router.push('/bus/time');
 			},
+			goHistory() {
+				this.$router.push('/history');
+			}
 		}
 	}
 </script>

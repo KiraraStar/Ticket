@@ -6,12 +6,12 @@
 		<div class="login"> 
 			<h2>注册</h2>
 			<el-form :model="ruleForm" label-width="60px" :label-position="labelPosition">
-				<el-input type="text" v-model="ruleForm.account" autocomplete="off" placeholder="用户名"></el-input>
-				<el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="密码"></el-input>
-				<el-input type="password" v-model="ruleForm.passrepeat" autocomplete="off" placeholder="重复密码"></el-input>
-				
+				<el-input type="text" v-model="ruleForm.account" autocomplete="off" placeholder="用户名" id="account"></el-input>
+				<el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="密码至少六位且大写字母开头" id="password"></el-input>
+				<el-input type="text" v-model="ruleForm.email" autocomplete="off" placeholder="邮箱" id="email"></el-input>
+				<p class="error-p"></p>
 				<div class="item">
-					<button type="button" class="submit-btn primary" @click="submitForm('ruleForm')">注册</button>
+					<button type="button" class="submit-btn primary" @click="submitForm">注册</button>
 				</div>
 			
 			</el-form>
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+	import axios from 'axios';
+	import Cookies from 'js-cookie';
 	export default{
 		data(){
 			return{
@@ -27,19 +29,81 @@
 				ruleForm: {
 					account: '',
 					pass: '',
-					passrepeat: '',
+					email: '',
 				},
 			}
 		},
 		methods:{
 			returnPrevious(){
 				this.$router.go(-1);
+			},
+			submitForm(){
+				let error = document.querySelector('.error-p');
+				if(this.ruleForm.account === ''){
+					error.style.display = 'block';
+					error.innerHTML = '用户名为空！';
+					return 0;
+				}
+				if(this.ruleForm.pass === ''){
+					error.style.display = 'block';
+					error.innerHTML = '密码为空！';
+					return 0;
+				}
+				let exg = /^[A-Z]{1}[A-Za-z0-9]{5,}/;
+				if(!exg.test(this.ruleForm.pass)){
+					error.style.display = 'block';
+					error.innerHTML = '密码格式错误！';
+					return 0;
+				}
+				if(this.ruleForm.email === ''){
+					error.style.display = 'block';
+					error.innerHTML = '邮箱为空！';
+					return 0;
+				}
+				let reg = /^([a-zA-Z]|[0-9])(\w|-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+				if(!reg.test(this.ruleForm.email)){
+					error.style.display = 'block';
+					error.innerHTML = '邮箱格式错误！';
+					return 0;
+				}
+				//axios
+				let form = new FormData();
+				form.append('account', this.ruleForm.account);
+				form.append('password',this.ruleForm.pass);
+				form.append('email',this.ruleForm.email);
+				
+				let url = this.$store.state.urlPort + '/springboot/Add';
+				let that = this;
+				axios.post(url,form).then(function(response){
+					console.log(response);
+					
+					
+					let ter = {};
+					ter['name'] = response.data['name'];
+					ter['sum'] = response.data['sum']
+					that.$store.commit('updateUser',ter);
+					
+					localStorage.setItem('name', ter['name']);
+					localStorage.setItem('pay',ter['sum']);
+					localStorage.setItem('user',response.data['md5']);
+					that.$store.commit('updateStatus',true);
+					
+					Cookies.set('name', 'login', { expires: 7, path: '/' });
+					Cookies.set('user', response.data['md5'], { expires: 7, path: '/' });
+					that.$router.push('/');
+				})
+				// this.$router.push('/profile');
 			}
 		}
 	}
 </script>
 
 <style scoped="" lang="scss">
+	.error-p{
+		display: none;
+		color: red;
+		text-align: center;
+	}
 	.login-main{
 		position: relative;
 		background-color: #f5f6f7;
